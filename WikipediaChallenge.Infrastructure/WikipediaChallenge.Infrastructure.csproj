@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ConsoleTables" Version="2.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WikipediaChallenge.Application\WikipediaChallenge.Application.csproj" />
+    <ProjectReference Include="..\WikipediaChallenge.Domain\WikipediaChallenge.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
