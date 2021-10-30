@@ -37,10 +37,11 @@ namespace WikipediaChallenge.Application.Usecase
                 var time = date.ToString("HH0000");
 
                 var downloadURL = String.Format(wikipediaRepository.GetRepositoryURL(), year, month, day, time);
-                var folder = localRepository.GetLocationFolder() + String.Format("{0}/{0}-{1}/", year, month);
+                var uFolder = localRepository.GetUncompressedLocationFolder() + String.Format("/{0}/{0}-{1}/", year, month);
+                var cFolder = localRepository.GetCompressedLocationFolder() + String.Format("/{0}/{0}-{1}/", year, month);
                 var filename = String.Format("pageviews-{0}-{1}.gz", day, time);
 
-                Domain.DTO.WikipediaPageView wikipediaPageView = new(downloadURL, folder, filename);
+                Domain.DTO.WikipediaPageView wikipediaPageView = new(downloadURL, cFolder, uFolder, filename);
                 list.Add(wikipediaPageView);
             });
 

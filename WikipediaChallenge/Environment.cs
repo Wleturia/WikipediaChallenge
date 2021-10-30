@@ -11,5 +11,6 @@ namespace WikipediaChallenge.Console
     {
         public static string PageViewBaseUrlTemplate = ConfigurationManager.AppSettings["RepositoryURITemplate"];
         public static string DownloadBaseFolder = ConfigurationManager.AppSettings["DownloadFolder"];
+        public static string UncompressedBaseFolder = ConfigurationManager.AppSettings["UncompressedFolder"];
     }
 }

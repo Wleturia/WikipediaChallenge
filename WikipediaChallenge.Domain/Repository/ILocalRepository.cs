@@ -10,6 +10,7 @@ namespace WikipediaChallenge.Domain.Repository
     {
         public Boolean VerifyFile(String filePath);
         public Exception CreateFolder(String folderStructure);
-        public string GetLocationFolder();
+        public string GetUncompressedLocationFolder();
+        public string GetCompressedLocationFolder();
     }
 }

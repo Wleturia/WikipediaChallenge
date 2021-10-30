@@ -7,11 +7,25 @@ namespace WikipediaChallenge.Infrastructure.Repository
 {
     public class LocalRepository : ILocalRepository
     {
-        private readonly string localFolder;
+        private readonly string uncompressedFolder;
+        private readonly string compressedFolder;
 
-        public LocalRepository(string localFolder)
+        public LocalRepository(string compressedFolder, string uncompressedFolder)
         {
-            this.localFolder = localFolder;
+            this.compressedFolder = compressedFolder;
+            this.uncompressedFolder = uncompressedFolder;
+        }
+
+        public Exception Initialize()
+        {
+            Exception err;
+            err = CreateFolder(this.compressedFolder);
+            if (err != null)
+            {
+                return err;
+            }
+            err = CreateFolder(this.uncompressedFolder);
+            return err;
         }
 
         public Exception CreateFolder(string folderStructure)
@@ -28,15 +42,19 @@ namespace WikipediaChallenge.Infrastructure.Repository
                 }
             return null;
         }
-
-        public string GetLocationFolder()
-        {
-            return this.localFolder;
-        }
-
         public Boolean VerifyFile(string filePath)
         {
             return File.Exists(@filePath);
+        }
+
+        public string GetUncompressedLocationFolder()
+        {
+            return this.uncompressedFolder;
+        }
+
+        public string GetCompressedLocationFolder()
+        {
+            return this.compressedFolder;
         }
     }
 }

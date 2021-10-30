@@ -37,7 +37,7 @@ namespace WikipediaChallenge.Infrastructure.Delivery
             {
                 try
                 {
-                    Exception folder = application.localRepository.CreateFolder(wko.folder);
+                    Exception folder = application.localRepository.CreateFolder(wko.cFolder);
                 }
                 catch (Exception err)
                 {
@@ -45,7 +45,7 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                     return;
                 }
 
-                if (application.localRepository.VerifyFile(wko.folder + wko.filename))
+                if (application.localRepository.VerifyFile(wko.cFolder + wko.filename))
                 {
                     Console.WriteLine(String.Format("File {0} exists", wko.filename));
                     return;

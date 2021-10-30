@@ -1,4 +1,5 @@
-﻿using WikipediaChallenge.Infrastructure.Delivery;
+﻿using System;
+using WikipediaChallenge.Infrastructure.Delivery;
 using WikipediaChallenge.Infrastructure.Repository;
 
 namespace WikipediaChallenge
@@ -18,7 +19,13 @@ namespace WikipediaChallenge
         static ApplicationController Initialize()
         {
             WikipediaRepository wikipediaRepository = new(Console.Environment.PageViewBaseUrlTemplate);
-            LocalRepository localRepository = new(Console.Environment.DownloadBaseFolder);
+            LocalRepository localRepository = new(Console.Environment.DownloadBaseFolder, Console.Environment.UncompressedBaseFolder);
+            Exception err = localRepository.Initialize();
+            if (err != null)
+            {
+                System.Console.WriteLine("Cannot initalize local repository" + err);
+                System.Environment.Exit(1);
+            }
 
             Application.Usecase.Application usecase = new(wikipediaRepository, localRepository);
 

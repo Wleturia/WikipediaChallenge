@@ -21,12 +21,12 @@ namespace WikipediaChallenge.Infrastructure.Repository
         public Exception DownloadDataWikipediaDTO(Domain.DTO.WikipediaPageView wikipediaPageView)
         {
             Console.WriteLine("Retrieving data from: " + wikipediaPageView.url);
-            Console.WriteLine("Writing into: " + wikipediaPageView.folder);
+            Console.WriteLine("Writing into: " + wikipediaPageView.cFolder);
 
             using WebClient wc = new WebClient();
             try
             {
-                wc.DownloadFile(wikipediaPageView.url, @wikipediaPageView.folder + wikipediaPageView.filename);
+                wc.DownloadFile(wikipediaPageView.url, @wikipediaPageView.cFolder + wikipediaPageView.filename);
             }
             catch (Exception err)
             {
