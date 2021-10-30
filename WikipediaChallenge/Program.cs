@@ -1,24 +1,27 @@
-﻿using System;
-using WikipediaChallenge.Infrastructure.Delivery;
+﻿using WikipediaChallenge.Infrastructure.Delivery;
 using WikipediaChallenge.Infrastructure.Repository;
 
 namespace WikipediaChallenge
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            Console.WriteLine("WikipediaChallenge");
+            System.Console.WriteLine("WikipediaChallenge");
 
             ApplicationController ac = Initialize();
 
-            ac.GetData();
+            ac.GetDataFromLastHours(5);
         }
 
         static ApplicationController Initialize()
         {
-            Repository repository = new();
-            Application.Usecase.Application usecase = new(repository);
+            WikipediaRepository wikipediaRepository = new(Console.Environment.PageViewBaseUrlTemplate);
+            LocalRepository localRepository = new(Console.Environment.DownloadBaseFolder);
+
+            Application.Usecase.Application usecase = new(wikipediaRepository, localRepository);
+
             ApplicationController applicationController = new(usecase);
 
             return applicationController;

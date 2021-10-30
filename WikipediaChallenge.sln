@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikipediaChallenge.Console", "WikipediaChallenge\WikipediaChallenge.Console.csproj", "{CE4E8C95-7FFD-4423-AE1F-89851BDA40F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.ConsoleApp", "WikipediaChallenge\WikipediaChallenge.ConsoleApp.csproj", "{CE4E8C95-7FFD-4423-AE1F-89851BDA40F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikipediaChallenge.Domain", "WikipediaChallenge.Domain\WikipediaChallenge.Domain.csproj", "{D82BCDC5-DFE1-403B-8011-4188DCBAAAE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.Domain", "WikipediaChallenge.Domain\WikipediaChallenge.Domain.csproj", "{D82BCDC5-DFE1-403B-8011-4188DCBAAAE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikipediaChallenge.Infrastructure", "WikipediaChallenge.Infrastructure\WikipediaChallenge.Infrastructure.csproj", "{E5031F1A-6B5A-4EF8-BABB-7521DFCC2E83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.Infrastructure", "WikipediaChallenge.Infrastructure\WikipediaChallenge.Infrastructure.csproj", "{E5031F1A-6B5A-4EF8-BABB-7521DFCC2E83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikipediaChallenge.Application", "WikipediaChallenge.Application\WikipediaChallenge.Application.csproj", "{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.Application", "WikipediaChallenge.Application\WikipediaChallenge.Application.csproj", "{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

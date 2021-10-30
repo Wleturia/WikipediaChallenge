@@ -1,29 +1,68 @@
 ﻿using System.Collections.Generic;
 using WikipediaChallenge.Domain.VO;
+using WikipediaChallenge.Domain.Mapping;
+using System;
+using System.Linq;
 
 namespace WikipediaChallenge.Infrastructure.Delivery
 {
     public class ApplicationController
     {
         readonly Application.Usecase.Application application;
+        PageViewMapping mapping = new PageViewMapping();
 
         public ApplicationController(Application.Usecase.Application app)
         {
             application = app;
         }
 
-        public void GetData()
+        public void GetDataFromLastHours(int hours)
         {
-            Stack<PageView> pageViews = new Stack<PageView>();
-            PageView p1 = new("it.m", "renault", 10);
-            PageView p2 = new("en", "apple", 50);
-            pageViews.Push(p1);
-            pageViews.Push(p2);
+            if (hours < 1)
+            {
+                Console.WriteLine("Hour cannot be less than 1");
+                return;
+            }
 
+            List<DateTime> datetimes = new();
 
-            application.GetPageViewForPreviuosHours(5);
+            Enumerable.Range(0, hours).ToList().ForEach(hour =>
+            {
+                datetimes.Add(DateTime.Now.AddHours(hour * -1));
+            });
 
-            ConsoleTables.ConsoleTable.From<PageView>(pageViews).Write();
+            List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
+
+            wikipediaPageViewsDTO.ForEach(wko =>
+            {
+                try
+                {
+                    Exception folder = application.localRepository.CreateFolder(wko.folder);
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine(err.Message);
+                    return;
+                }
+
+                if (application.localRepository.VerifyFile(wko.folder + wko.filename))
+                {
+                    Console.WriteLine(String.Format("File {0} exists", wko.filename));
+                    return;
+                }
+                application.wikipediaRepository.DownloadDataWikipediaDTO(wko);
+            });
+            /*
+                        (List<Domain.Entity.PageView> pages, Exception err) = application.GetPageViewForPreviuosHours(hours);
+
+                        if (err != null)
+                        {
+                            Console.WriteLine("The data cannot be retrieved: " + err.Message);
+                            return;
+                        }
+
+                        IEnumerable<PageView> pageViews = mapping.MapPageViewFromModelToDTOList(pages);
+                        ConsoleTables.ConsoleTable.From<PageView>(pageViews).Write();*/
             return;
         }
     }
