@@ -4,6 +4,8 @@ using WikipediaChallenge.Domain.Entity;
 using WikipediaChallenge.Domain.Repository;
 using WikipediaChallenge.Domain.Usecase;
 using System.Configuration;
+using System.IO;
+using System.IO.Compression;
 
 namespace WikipediaChallenge.Application.Usecase
 {
@@ -16,13 +18,6 @@ namespace WikipediaChallenge.Application.Usecase
         {
             this.wikipediaRepository = wikipediaRepository;
             this.localRepository = localRepository;
-        }
-
-        public (List<PageView>, Exception err) GetPageViewForPreviuosHours(int hours)
-        {
-            (List<PageView> pageViews, Exception err) = wikipediaRepository.GetDataFromURITemplateWithDate(DateTime.Now);
-
-            return (pageViews, err);
         }
 
         // Should move to services layer
@@ -39,9 +34,9 @@ namespace WikipediaChallenge.Application.Usecase
                 var downloadURL = String.Format(wikipediaRepository.GetRepositoryURL(), year, month, day, time);
                 var uFolder = localRepository.GetUncompressedLocationFolder() + String.Format("/{0}/{0}-{1}/", year, month);
                 var cFolder = localRepository.GetCompressedLocationFolder() + String.Format("/{0}/{0}-{1}/", year, month);
-                var filename = String.Format("pageviews-{0}-{1}.gz", day, time);
+                var filename = String.Format("pageviews-{0}-{1}", day, time);
 
-                Domain.DTO.WikipediaPageView wikipediaPageView = new(downloadURL, cFolder, uFolder, filename);
+                Domain.DTO.WikipediaPageView wikipediaPageView = new(downloadURL, cFolder, uFolder, filename, ".gz");
                 list.Add(wikipediaPageView);
             });
 

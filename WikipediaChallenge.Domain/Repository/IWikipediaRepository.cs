@@ -6,9 +6,7 @@ namespace WikipediaChallenge.Domain.Repository
     public interface IWikipediaRepository
     {
         public Exception DownloadDataWikipediaDTO(DTO.WikipediaPageView wikipediaPageView);
-
-        public (List<Entity.PageView> pageViews, Exception exception) GetDataFromURITemplateWithDate(DateTime date);
-
+        public Exception DecompressDataWikipediaDTO(DTO.WikipediaPageView wikipediaPageView);
         public string GetRepositoryURL();
     }
 }

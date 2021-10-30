@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using WikipediaChallenge.Domain.Entity;
+using WikipediaChallenge.Domain.DTO;
 using WikipediaChallenge.Domain.Repository;
 
 namespace WikipediaChallenge.Infrastructure.Repository
@@ -18,7 +16,28 @@ namespace WikipediaChallenge.Infrastructure.Repository
             this.repositoryURL = repositoryURL;
         }
 
-        public Exception DownloadDataWikipediaDTO(Domain.DTO.WikipediaPageView wikipediaPageView)
+        public Exception DecompressDataWikipediaDTO(WikipediaPageView wikipediaPageView)
+        {
+            try
+            {
+                using FileStream originalFileStream = File.Create(wikipediaPageView.cFolder + wikipediaPageView.filename + wikipediaPageView.fileExtension);
+
+                using FileStream decompressedFileStream = File.Create(wikipediaPageView.uFolder + wikipediaPageView.filename);
+
+                using GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress);
+
+                Console.WriteLine(String.Format("Unziping {0} into {1}", wikipediaPageView.filename, wikipediaPageView.uFolder));
+                decompressionStream.CopyTo(decompressedFileStream);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err);
+                return err;
+            }
+            return null;
+        }
+
+        public Exception DownloadDataWikipediaDTO(WikipediaPageView wikipediaPageView)
         {
             Console.WriteLine("Retrieving data from: " + wikipediaPageView.url);
             Console.WriteLine("Writing into: " + wikipediaPageView.cFolder);
@@ -26,7 +45,7 @@ namespace WikipediaChallenge.Infrastructure.Repository
             using WebClient wc = new WebClient();
             try
             {
-                wc.DownloadFile(wikipediaPageView.url, @wikipediaPageView.cFolder + wikipediaPageView.filename);
+                wc.DownloadFile(wikipediaPageView.url, @wikipediaPageView.cFolder + wikipediaPageView.filename + wikipediaPageView.fileExtension);
             }
             catch (Exception err)
             {
@@ -34,21 +53,6 @@ namespace WikipediaChallenge.Infrastructure.Repository
                 return err;
             }
             return null;
-        }
-
-        public (List<PageView> pageViews, Exception exception) GetDataFromURITemplateWithDate(DateTime date)
-        {
-            /*
-                        bool existsFolder = System.IO.Directory.Exists(downloadF);
-                        if (!existsFolder)
-                            System.IO.Directory.CreateDirectory(downloadF);
-
-                        List<PageView> pageViews = new List<PageView>();
-                        Console.WriteLine("Repository");
-                        return (pageViews, new Exception("Critical error"));
-            */
-            throw new NotImplementedException();
-
         }
 
         public string GetRepositoryURL()

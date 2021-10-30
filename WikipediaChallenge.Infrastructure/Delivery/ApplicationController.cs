@@ -33,11 +33,14 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 
             List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
 
+            ConsoleTables.ConsoleTable.From<Domain.DTO.WikipediaPageView>(wikipediaPageViewsDTO).Write();
+
             wikipediaPageViewsDTO.ForEach(wko =>
             {
                 try
                 {
-                    Exception folder = application.localRepository.CreateFolder(wko.cFolder);
+                    application.localRepository.CreateFolder(wko.cFolder);
+                    application.localRepository.CreateFolder(wko.uFolder);
                 }
                 catch (Exception err)
                 {
@@ -45,13 +48,21 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                     return;
                 }
 
-                if (application.localRepository.VerifyFile(wko.cFolder + wko.filename))
+                if (!application.localRepository.VerifyFile(wko.cFolder + wko.filename + wko.fileExtension))
                 {
-                    Console.WriteLine(String.Format("File {0} exists", wko.filename));
-                    return;
+                    Console.WriteLine("Download data");
+                    application.wikipediaRepository.DownloadDataWikipediaDTO(wko);
                 }
-                application.wikipediaRepository.DownloadDataWikipediaDTO(wko);
+
+
+                if (!application.localRepository.VerifyFile(wko.uFolder + wko.filename))
+                {
+                    Console.WriteLine("Unzip data");
+                    application.wikipediaRepository.DecompressDataWikipediaDTO(wko);
+                }
             });
+
+
             /*
                         (List<Domain.Entity.PageView> pages, Exception err) = application.GetPageViewForPreviuosHours(hours);
 
@@ -62,7 +73,8 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                         }
 
                         IEnumerable<PageView> pageViews = mapping.MapPageViewFromModelToDTOList(pages);
-                        ConsoleTables.ConsoleTable.From<PageView>(pageViews).Write();*/
+                        ConsoleTables.ConsoleTable.From<PageView>(pageViews).Write();
+            */
             return;
         }
     }
