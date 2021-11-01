@@ -17,6 +17,9 @@ The Wikimedia Foundation provides all pageviews for Wikipedia site since 2015 in
 ## Building with
 - .Net Core 5.0 (C#)
 
+## Unit Testing
+- xUnit
+
 
 ## Libraries
 - [ConsoleTables](https://www.nuget.org/packages/ConsoleTables)
