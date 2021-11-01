@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using WikipediaChallenge.Domain.VO;
 using WikipediaChallenge.Domain.Mapping;
 using System;
 using System.Linq;
@@ -8,10 +7,10 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 {
     public class ApplicationController
     {
-        readonly Application.Usecase.Application application;
+        readonly Domain.Usecase.IApplication application;
         PageViewMapping mapping = new PageViewMapping();
 
-        public ApplicationController(Application.Usecase.Application app)
+        public ApplicationController(Domain.Usecase.IApplication app)
         {
             application = app;
         }
@@ -33,48 +32,42 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 
             List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
 
-            ConsoleTables.ConsoleTable.From<Domain.DTO.WikipediaPageView>(wikipediaPageViewsDTO).Write();
+            application.DownloadWikipediaData(wikipediaPageViewsDTO);
+            application.DecompressWikipediaData(wikipediaPageViewsDTO);
 
-            wikipediaPageViewsDTO.ForEach(wko =>
+            var PageViewEntity = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO);
+
+            var groupBy = new List<string> { "domainCode", "pageTitle" };
+
+            Dictionary<string, Domain.Entity.PageView> PageViewEntityDict = new Dictionary<string, Domain.Entity.PageView>();
+
+            PageViewEntity.ForEach(pageView =>
             {
-                try
+                string concatProperty = "";
+                groupBy.ForEach(property =>
                 {
-                    application.localRepository.CreateFolder(wko.cFolder);
-                    application.localRepository.CreateFolder(wko.uFolder);
-                }
-                catch (Exception err)
+                    var p = pageView.GetType().GetProperty(property);
+                    var v = p.GetValue(pageView, null);
+                    concatProperty += v;
+                });
+
+                if (!PageViewEntityDict.ContainsKey(concatProperty))
                 {
-                    Console.WriteLine(err.Message);
+                    PageViewEntityDict.Add(concatProperty, pageView);
                     return;
                 }
 
-                if (!application.localRepository.VerifyFile(wko.cFolder + wko.filename + wko.fileExtension))
-                {
-                    Console.WriteLine("Download data");
-                    application.wikipediaRepository.DownloadDataWikipediaDTO(wko);
-                }
-
-
-                if (!application.localRepository.VerifyFile(wko.uFolder + wko.filename))
-                {
-                    Console.WriteLine("Unzip data");
-                    application.wikipediaRepository.DecompressDataWikipediaDTO(wko);
-                }
+                PageViewEntityDict[concatProperty].countViews += pageView.countViews;
             });
 
+            var groupedData = PageViewEntityDict.Values.ToList()
+                .OrderByDescending(it => it.countViews)
+                .Take(100)
+                .ToList();
 
-            /*
-                        (List<Domain.Entity.PageView> pages, Exception err) = application.GetPageViewForPreviuosHours(hours);
+            var valueData = mapping.MapPageViewFromModelToDTOList(groupedData);
 
-                        if (err != null)
-                        {
-                            Console.WriteLine("The data cannot be retrieved: " + err.Message);
-                            return;
-                        }
-
-                        IEnumerable<PageView> pageViews = mapping.MapPageViewFromModelToDTOList(pages);
-                        ConsoleTables.ConsoleTable.From<PageView>(pageViews).Write();
-            */
+            ConsoleTables.ConsoleTable.From<Domain.VO.PageView>(valueData).Write();
             return;
         }
     }
