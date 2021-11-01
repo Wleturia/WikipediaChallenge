@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using WikipediaChallenge.Domain.DTO;
+using WikipediaChallenge.Domain.Entity;
 using WikipediaChallenge.Domain.Repository;
 
 namespace WikipediaChallenge.Infrastructure.Repository
@@ -15,12 +17,16 @@ namespace WikipediaChallenge.Infrastructure.Repository
         {
             this.repositoryURL = repositoryURL;
         }
+        public string GetRepositoryURL()
+        {
+            return this.repositoryURL;
+        }
 
         public Exception DecompressDataWikipediaDTO(WikipediaPageView wikipediaPageView)
         {
             try
             {
-                using FileStream originalFileStream = File.Create(wikipediaPageView.cFolder + wikipediaPageView.filename + wikipediaPageView.fileExtension);
+                using FileStream originalFileStream = File.Open(wikipediaPageView.cFolder + wikipediaPageView.filename + wikipediaPageView.fileExtension, FileMode.Open);
 
                 using FileStream decompressedFileStream = File.Create(wikipediaPageView.uFolder + wikipediaPageView.filename);
 
@@ -53,11 +59,6 @@ namespace WikipediaChallenge.Infrastructure.Repository
                 return err;
             }
             return null;
-        }
-
-        public string GetRepositoryURL()
-        {
-            return this.repositoryURL;
         }
     }
 }
