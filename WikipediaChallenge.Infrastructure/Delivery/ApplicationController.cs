@@ -15,12 +15,12 @@ namespace WikipediaChallenge.Infrastructure.Delivery
             application = app;
         }
 
-        public void GetDataFromLastHours(int hours)
+        // HELPERS
+        private List<DateTime> GetDateTimeListFromIntHours(int hours)
         {
             if (hours < 1)
             {
-                Console.WriteLine("Hour cannot be less than 1");
-                return;
+                throw new InvalidOperationException("Hour cannot be negative");
             }
 
             List<DateTime> datetimes = new();
@@ -30,12 +30,28 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                 datetimes.Add(DateTime.Now.AddHours(hour * -1));
             });
 
-            GetDataFromDatetimeList(datetimes);
+            return datetimes;
+        }
+
+        public void GetDataFromLastHours(int hours)
+        {
+            try
+            {
+                var datetimes = GetDateTimeListFromIntHours(hours);
+                GetDataFromDatetimeList(datetimes);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Cannot retrieve data from hours " + err.Message);
+            }
         }
 
         public void GetDataFromDatetimeList(List<DateTime> datetimes)
         {
             List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
+
+            ConsoleTables.ConsoleTable.From<Domain.DTO.WikipediaPageView>(wikipediaPageViewsDTO).Write();
+
 
             application.DownloadWikipediaData(wikipediaPageViewsDTO);
             application.DecompressWikipediaData(wikipediaPageViewsDTO);
