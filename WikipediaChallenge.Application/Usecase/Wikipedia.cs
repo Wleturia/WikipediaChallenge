@@ -92,6 +92,13 @@ namespace WikipediaChallenge.Application.Usecase
                 {
                     string s = sr.ReadLine();
                     var strSplit = s.Split(" ");
+
+                    if (strSplit.Length != 4)
+                    {
+                        Console.WriteLine("Skipping corrupted file record: " + wk.filename);
+                        return;
+                    }
+
                     pageViews.Add(new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]));
                 }
             });
