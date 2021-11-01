@@ -30,6 +30,11 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                 datetimes.Add(DateTime.Now.AddHours(hour * -1));
             });
 
+            GetDataFromDatetimeList(datetimes);
+        }
+
+        public void GetDataFromDatetimeList(List<DateTime> datetimes)
+        {
             List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
 
             application.DownloadWikipediaData(wikipediaPageViewsDTO);
