@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.Infrastr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaChallenge.Application", "WikipediaChallenge.Application\WikipediaChallenge.Application.csproj", "{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikipediaChallenge.Test", "WikipediaChallenge.Test\WikipediaChallenge.Test.csproj", "{055C0231-5F94-4FD6-BB7F-8DF21B51F18B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE57EBA7-90B5-42DE-804B-E7BECDE413BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055C0231-5F94-4FD6-BB7F-8DF21B51F18B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055C0231-5F94-4FD6-BB7F-8DF21B51F18B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055C0231-5F94-4FD6-BB7F-8DF21B51F18B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055C0231-5F94-4FD6-BB7F-8DF21B51F18B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
