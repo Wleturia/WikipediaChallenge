@@ -55,5 +55,10 @@ namespace WikipediaChallenge.Infrastructure.Repository
         {
             return this.compressedFolder;
         }
+
+        public StreamReader OpenStreamReader(string fileLocation)
+        {
+            return new StreamReader(fileLocation);
+        }
     }
 }
