@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using WikipediaChallenge.Domain.Entity;
 using WikipediaChallenge.Domain.Repository;
 using WikipediaChallenge.Domain.Usecase;
-using System.Configuration;
-using System.IO;
-using System.IO.Compression;
+using WikipediaChallenge.Domain.DTO;
 
 namespace WikipediaChallenge.Application.Usecase
 {
@@ -18,6 +16,45 @@ namespace WikipediaChallenge.Application.Usecase
         {
             this.wikipediaRepository = wikipediaRepository;
             this.localRepository = localRepository;
+        }
+
+        public Exception DecompressWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        {
+            Exception err = null;
+            wikipediaPageViews.ForEach(wko =>
+            {
+                err = localRepository.CreateFolder(wko.uFolder);
+                if (err != null)
+                {
+                    return;
+                }
+
+                if (!localRepository.VerifyFile(wko.uFolder + wko.filename))
+                {
+                    wikipediaRepository.DecompressDataWikipediaDTO(wko);
+                }
+            });
+            return null;
+        }
+
+        public Exception DownloadWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        {
+            Exception err = null;
+            wikipediaPageViews.ForEach(wko =>
+            {
+                err = localRepository.CreateFolder(wko.cFolder);
+                if (err != null)
+                {
+                    return;
+                }
+
+
+                if (!localRepository.VerifyFile(wko.cFolder + wko.filename + wko.fileExtension))
+                {
+                    wikipediaRepository.DownloadDataWikipediaDTO(wko);
+                }
+            });
+            return err;
         }
 
         // Should move to services layer
@@ -41,6 +78,25 @@ namespace WikipediaChallenge.Application.Usecase
             });
 
             return list;
+        }
+
+        public List<PageView> ProcessDecompressedWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        {
+            List<PageView> pageViews = new();
+
+            wikipediaPageViews.ForEach(wk =>
+            {
+                var sr = localRepository.OpenStreamReader(wk.uFolder + wk.filename);
+
+                while (!sr.EndOfStream)
+                {
+                    string s = sr.ReadLine();
+                    var strSplit = s.Split(" ");
+                    pageViews.Add(new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]));
+                }
+            });
+
+            return pageViews;
         }
     }
 }
