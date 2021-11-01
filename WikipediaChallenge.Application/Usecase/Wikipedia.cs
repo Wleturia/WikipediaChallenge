@@ -7,12 +7,12 @@ using WikipediaChallenge.Domain.DTO;
 
 namespace WikipediaChallenge.Application.Usecase
 {
-    public class Application : IApplication
+    public class Wikipedia : IWikipedia
     {
         public readonly IWikipediaRepository wikipediaRepository;
         public readonly ILocalRepository localRepository;
 
-        public Application(IWikipediaRepository wikipediaRepository, ILocalRepository localRepository)
+        public Wikipedia(IWikipediaRepository wikipediaRepository, ILocalRepository localRepository)
         {
             this.wikipediaRepository = wikipediaRepository;
             this.localRepository = localRepository;

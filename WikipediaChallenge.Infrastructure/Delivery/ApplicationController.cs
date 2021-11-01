@@ -7,10 +7,10 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 {
     public class ApplicationController
     {
-        readonly Domain.Usecase.IApplication application;
+        readonly Domain.Usecase.IWikipedia application;
         PageViewMapping mapping = new PageViewMapping();
 
-        public ApplicationController(Domain.Usecase.IApplication app)
+        public ApplicationController(Domain.Usecase.IWikipedia app)
         {
             application = app;
         }

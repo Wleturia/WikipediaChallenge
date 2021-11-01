@@ -27,7 +27,7 @@ namespace WikipediaChallenge
                 System.Environment.Exit(1);
             }
 
-            Application.Usecase.Application usecase = new(wikipediaRepository, localRepository);
+            Application.Usecase.Wikipedia usecase = new(wikipediaRepository, localRepository);
 
             ApplicationController applicationController = new(usecase);
 
