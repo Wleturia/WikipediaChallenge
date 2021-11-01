@@ -10,8 +10,8 @@ namespace WikipediaChallenge.Test
     public class ApplicationController
     {
         static string wikipediaURL = "https://dumps.wikimedia.org/other/pageviews/{0}/{0}-{1}/pageviews-{2}-{3}.gz";
-        static string dfolder = "d:/tmp/compressed";
-        static string ufolder = "d:/tmp/uncompressed";
+        static string dfolder = "c:/tmp/compressed";
+        static string ufolder = "c:/tmp/uncompressed";
 
         static Infrastructure.Repository.WikipediaRepository wikipediaRepository = new(wikipediaURL);
         static Infrastructure.Repository.LocalRepository localRepository = new(ufolder, dfolder);
@@ -31,8 +31,8 @@ namespace WikipediaChallenge.Test
 
             Domain.DTO.WikipediaPageView wikipediaPageView = new(
             "https://dumps.wikimedia.org/other/pageviews/2021/2021-11/pageviews-20211101-000000.gz",
-            "d:/tmp/uncompressed/2021/2021-11/",
-            "d:/tmp/compressed/2021/2021-11/",
+            "c:/tmp/uncompressed/2021/2021-11/",
+            "c:/tmp/compressed/2021/2021-11/",
             "pageviews-20211101-000000", ".gz");
 
             List<Domain.DTO.WikipediaPageView> wikipediaPageViews = new List<Domain.DTO.WikipediaPageView> { wikipediaPageView };

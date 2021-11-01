@@ -5,8 +5,8 @@ namespace WikipediaChallenge.Test
 {
     public class LocalRepository
     {
-        static string localRepositoryCompressedFolder = "d:/tmp/compressed";
-        static string localRepositoryUnompressedFolder = "d:/tmp/uncompressed";
+        static string localRepositoryCompressedFolder = "c:/tmp/compressed";
+        static string localRepositoryUnompressedFolder = "c:/tmp/uncompressed";
 
         Infrastructure.Repository.LocalRepository localRepository = new(localRepositoryCompressedFolder, localRepositoryUnompressedFolder);
 
