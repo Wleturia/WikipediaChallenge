@@ -37,6 +37,9 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 
             var PageViewEntity = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO);
 
+            Console.WriteLine("RAW DATA: " + PageViewEntity.Count);
+
+
             var groupBy = new List<string> { "domainCode", "pageTitle" };
 
             Dictionary<string, Domain.Entity.PageView> PageViewEntityDict = new Dictionary<string, Domain.Entity.PageView>();
