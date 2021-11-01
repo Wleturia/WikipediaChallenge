@@ -67,11 +67,9 @@ namespace WikipediaChallenge.Infrastructure.Delivery
                 return;
             }
 
-            var PageViewEntityList = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO);
+            var PageViewEntityList = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO, 100);
 
-            var groupedData = PageViewEntityList
-                .OrderByDescending(it => it.countViews)
-                .Take(100);
+            var groupedData = PageViewEntityList;
 
             var valueData = mapping.MapPageViewFromModelToDTOList(groupedData);
 

@@ -91,9 +91,10 @@ namespace WikipediaChallenge.Application.Usecase
             return list;
         }
 
-        public IEnumerable<PageView> ProcessDecompressedWikipediaData(IEnumerable<WikipediaPageView> wikipediaPageViews)
+        public IEnumerable<Domain.Entity.PageView> ProcessDecompressedWikipediaData(IEnumerable<WikipediaPageView> wikipediaPageViews, int qty)
         {
-            Dictionary<string, Domain.Entity.PageView> PageViewEntityDict = new Dictionary<string, Domain.Entity.PageView>();
+            Dictionary<string, int> PageViewEntityDict = new Dictionary<string, int>();
+            string separator = "|";
 
             foreach (var wk in wikipediaPageViews)
             {
@@ -111,21 +112,32 @@ namespace WikipediaChallenge.Application.Usecase
                             continue;
                         }
 
-                        PageView pageView = new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]);
-                        string concatProperty = strSplit[0] + strSplit[1];
+                        //   PageView pageView = new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]);
+                        string concatProperty = strSplit[0] + separator + strSplit[1] + separator + strSplit[3];
 
                         if (!PageViewEntityDict.ContainsKey(concatProperty))
                         {
-                            PageViewEntityDict.Add(concatProperty, pageView);
+                            PageViewEntityDict.Add(concatProperty, Int32.Parse(strSplit[2]));
                             continue;
                         }
 
-                        PageViewEntityDict[concatProperty].countViews += pageView.countViews;
+                        PageViewEntityDict[concatProperty] += Int32.Parse(strSplit[2]);
                     }
                 }
             }
 
-            return PageViewEntityDict.Values.ToList();
+
+            var pageViewEntityDictSliced = PageViewEntityDict.OrderByDescending(it => it.Value).Take(qty);
+
+            List<Domain.Entity.PageView> list = new List<Domain.Entity.PageView>();
+            foreach (var obj in pageViewEntityDictSliced)
+            {
+                var strSlice = obj.Key.Split("|");
+                list.Add(new Domain.Entity.PageView(strSlice[0], strSlice[1], obj.Value, strSlice[2]));
+            }
+            return list;
+
+            //return null;
         }
     }
 }
