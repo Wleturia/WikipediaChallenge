@@ -5,9 +5,9 @@ namespace WikipediaChallenge.Domain.Usecase
 {
     public interface IWikipedia
     {
-        public List<DTO.WikipediaPageView> FromDateTimeListRetrieveWikipediaPageViewDTOList(List<DateTime> dateTimes);
-        public Exception DownloadWikipediaData(List<DTO.WikipediaPageView> wikipediaPageViews);
-        public Exception DecompressWikipediaData(List<DTO.WikipediaPageView> wikipediaPageViews);
-        public List<Entity.PageView> ProcessDecompressedWikipediaData(List<DTO.WikipediaPageView> wikipediaPageViews);
+        public IEnumerable<DTO.WikipediaPageView> FromDateTimeListRetrieveWikipediaPageViewDTOList(IEnumerable<DateTime> dateTimes);
+        public Exception DownloadWikipediaData(IEnumerable<DTO.WikipediaPageView> wikipediaPageViews);
+        public Exception DecompressWikipediaData(IEnumerable<DTO.WikipediaPageView> wikipediaPageViews);
+        public IEnumerable<Entity.PageView> ProcessDecompressedWikipediaData(IEnumerable<DTO.WikipediaPageView> wikipediaPageViews);
     }
 }

@@ -55,7 +55,7 @@ namespace WikipediaChallenge.Infrastructure.Repository
             }
             catch (Exception err)
             {
-                Console.WriteLine("Error" + err);
+                Console.WriteLine("Error" + err.GetType());
                 return err;
             }
             return null;

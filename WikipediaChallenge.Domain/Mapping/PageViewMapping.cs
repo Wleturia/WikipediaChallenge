@@ -9,7 +9,7 @@ namespace WikipediaChallenge.Domain.Mapping
     public class PageViewMapping
     {
 
-        public List<VO.PageView> MapPageViewFromModelToDTOList(List<Entity.PageView> entities)
+        public IEnumerable<VO.PageView> MapPageViewFromModelToDTOList(IEnumerable<Entity.PageView> entities)
         {
             List<VO.PageView> list = new List<VO.PageView>();
             foreach (Entity.PageView entity in entities)

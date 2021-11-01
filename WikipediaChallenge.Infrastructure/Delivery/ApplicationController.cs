@@ -35,59 +35,43 @@ namespace WikipediaChallenge.Infrastructure.Delivery
 
         public void GetDataFromLastHours(int hours)
         {
+            List<DateTime> datetimes = new List<DateTime>();
             try
             {
-                var datetimes = GetDateTimeListFromIntHours(hours);
-                GetDataFromDatetimeList(datetimes);
+                datetimes = GetDateTimeListFromIntHours(hours);
             }
             catch (Exception err)
             {
                 Console.WriteLine("Cannot retrieve data from hours " + err.Message);
             }
+
+            GetDataFromDatetimeList(datetimes);
         }
 
         public void GetDataFromDatetimeList(List<DateTime> datetimes)
         {
-            List<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
+            IEnumerable<Domain.DTO.WikipediaPageView> wikipediaPageViewsDTO = application.FromDateTimeListRetrieveWikipediaPageViewDTOList(datetimes);
 
             ConsoleTables.ConsoleTable.From<Domain.DTO.WikipediaPageView>(wikipediaPageViewsDTO).Write();
 
-
-            application.DownloadWikipediaData(wikipediaPageViewsDTO);
-            application.DecompressWikipediaData(wikipediaPageViewsDTO);
-
-            var PageViewEntity = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO);
-
-            Console.WriteLine("RAW DATA: " + PageViewEntity.Count);
-
-
-            var groupBy = new List<string> { "domainCode", "pageTitle" };
-
-            Dictionary<string, Domain.Entity.PageView> PageViewEntityDict = new Dictionary<string, Domain.Entity.PageView>();
-
-            PageViewEntity.ForEach(pageView =>
+            var err = application.DownloadWikipediaData(wikipediaPageViewsDTO);
+            if (err != null)
             {
-                string concatProperty = "";
-                groupBy.ForEach(property =>
-                {
-                    var p = pageView.GetType().GetProperty(property);
-                    var v = p.GetValue(pageView, null);
-                    concatProperty += v;
-                });
+                Console.WriteLine("There was an error retrieving data from wikipedia source");
+                return;
+            }
+            err = application.DecompressWikipediaData(wikipediaPageViewsDTO);
+            if (err != null)
+            {
+                Console.WriteLine("There was an error decompressing data from local source");
+                return;
+            }
 
-                if (!PageViewEntityDict.ContainsKey(concatProperty))
-                {
-                    PageViewEntityDict.Add(concatProperty, pageView);
-                    return;
-                }
+            var PageViewEntityList = application.ProcessDecompressedWikipediaData(wikipediaPageViewsDTO);
 
-                PageViewEntityDict[concatProperty].countViews += pageView.countViews;
-            });
-
-            var groupedData = PageViewEntityDict.Values.ToList()
+            var groupedData = PageViewEntityList
                 .OrderByDescending(it => it.countViews)
-                .Take(100)
-                .ToList();
+                .Take(100);
 
             var valueData = mapping.MapPageViewFromModelToDTOList(groupedData);
 

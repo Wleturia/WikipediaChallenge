@@ -4,6 +4,8 @@ using WikipediaChallenge.Domain.Entity;
 using WikipediaChallenge.Domain.Repository;
 using WikipediaChallenge.Domain.Usecase;
 using WikipediaChallenge.Domain.DTO;
+using System.IO;
+using System.Linq;
 
 namespace WikipediaChallenge.Application.Usecase
 {
@@ -18,50 +20,59 @@ namespace WikipediaChallenge.Application.Usecase
             this.localRepository = localRepository;
         }
 
-        public Exception DecompressWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        public Exception DecompressWikipediaData(IEnumerable<WikipediaPageView> wikipediaPageViews)
         {
             Exception err = null;
-            wikipediaPageViews.ForEach(wko =>
+
+            foreach (var wko in wikipediaPageViews)
             {
                 err = localRepository.CreateFolder(wko.uFolder);
                 if (err != null)
                 {
-                    return;
+                    break;
                 }
 
                 if (!localRepository.VerifyFile(wko.uFolder + wko.filename))
                 {
-                    wikipediaRepository.DecompressDataWikipediaDTO(wko);
+                    err = wikipediaRepository.DecompressDataWikipediaDTO(wko);
+                    if (err != null)
+                    {
+                        break;
+                    }
                 }
-            });
-            return null;
+            }
+            return err;
         }
 
-        public Exception DownloadWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        public Exception DownloadWikipediaData(IEnumerable<WikipediaPageView> wikipediaPageViews)
         {
             Exception err = null;
-            wikipediaPageViews.ForEach(wko =>
+            foreach (var wko in wikipediaPageViews)
             {
                 err = localRepository.CreateFolder(wko.cFolder);
                 if (err != null)
                 {
-                    return;
+                    break;
                 }
 
 
                 if (!localRepository.VerifyFile(wko.cFolder + wko.filename + wko.fileExtension))
                 {
-                    wikipediaRepository.DownloadDataWikipediaDTO(wko);
+                    err = wikipediaRepository.DownloadDataWikipediaDTO(wko);
+                    if (err != null)
+                    {
+                        break;
+                    }
                 }
-            });
+            }
             return err;
         }
 
         // Should move to services layer
-        public List<Domain.DTO.WikipediaPageView> FromDateTimeListRetrieveWikipediaPageViewDTOList(List<DateTime> dateTimes)
+        public IEnumerable<Domain.DTO.WikipediaPageView> FromDateTimeListRetrieveWikipediaPageViewDTOList(IEnumerable<DateTime> dateTimes)
         {
             List<Domain.DTO.WikipediaPageView> list = new();
-            dateTimes.ForEach(date =>
+            foreach (var date in dateTimes)
             {
                 var year = date.Year.ToString();
                 var month = date.ToString("MM");
@@ -75,35 +86,46 @@ namespace WikipediaChallenge.Application.Usecase
 
                 Domain.DTO.WikipediaPageView wikipediaPageView = new(downloadURL, cFolder, uFolder, filename, ".gz");
                 list.Add(wikipediaPageView);
-            });
+            }
 
             return list;
         }
 
-        public List<PageView> ProcessDecompressedWikipediaData(List<WikipediaPageView> wikipediaPageViews)
+        public IEnumerable<PageView> ProcessDecompressedWikipediaData(IEnumerable<WikipediaPageView> wikipediaPageViews)
         {
-            List<PageView> pageViews = new();
+            Dictionary<string, Domain.Entity.PageView> PageViewEntityDict = new Dictionary<string, Domain.Entity.PageView>();
 
-            wikipediaPageViews.ForEach(wk =>
+            foreach (var wk in wikipediaPageViews)
             {
-                var sr = localRepository.OpenStreamReader(wk.uFolder + wk.filename);
-
-                while (!sr.EndOfStream)
+                Console.WriteLine("Processing: " + wk.filename);
+                using (var sr = localRepository.OpenStreamReader(wk.uFolder + wk.filename))
                 {
-                    string s = sr.ReadLine();
-                    var strSplit = s.Split(" ");
-
-                    if (strSplit.Length != 4)
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        Console.WriteLine("Skipping corrupted file record: " + wk.filename);
-                        return;
+                        var strSplit = line.Split(" ");
+
+                        if (strSplit.Length != 4)
+                        {
+                            Console.WriteLine("Skipping corrupted file record: " + wk.filename);
+                            continue;
+                        }
+
+                        PageView pageView = new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]);
+                        string concatProperty = strSplit[0] + strSplit[1];
+
+                        if (!PageViewEntityDict.ContainsKey(concatProperty))
+                        {
+                            PageViewEntityDict.Add(concatProperty, pageView);
+                            continue;
+                        }
+
+                        PageViewEntityDict[concatProperty].countViews += pageView.countViews;
                     }
-
-                    pageViews.Add(new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]));
                 }
-            });
+            }
 
-            return pageViews;
+            return PageViewEntityDict.Values.ToList();
         }
     }
 }
