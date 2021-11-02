@@ -112,8 +112,8 @@ namespace WikipediaChallenge.Application.Usecase
                             continue;
                         }
 
-                        //   PageView pageView = new PageView(strSplit[0], strSplit[1], Int32.Parse(strSplit[2]), strSplit[3]);
-                        string concatProperty = strSplit[0] + separator + strSplit[1] + separator + strSplit[3];
+                        // Group by DomainCode and PageTitle
+                        string concatProperty = strSplit[0] + separator + strSplit[1];
 
                         if (!PageViewEntityDict.ContainsKey(concatProperty))
                         {
@@ -133,7 +133,8 @@ namespace WikipediaChallenge.Application.Usecase
             foreach (var obj in pageViewEntityDictSliced)
             {
                 var strSlice = obj.Key.Split("|");
-                list.Add(new Domain.Entity.PageView(strSlice[0], strSlice[1], obj.Value, strSlice[2]));
+                // For optimization purposes last value will be null
+                list.Add(new Domain.Entity.PageView(strSlice[0], strSlice[1], obj.Value, ""));
             }
             return list;
 
